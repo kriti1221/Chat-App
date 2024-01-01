@@ -16,6 +16,9 @@ const io = new Server(server, {
 
 io.on('connection', client => {
     console.log("Connection is established");
+    client.on('new_message', (message) => {
+        client.broadcast.emit('broadcast_message', message);
+    })
     client.on('disconnect', () => {
         console.log('Connection is disconnected');
     });

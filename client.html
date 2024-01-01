@@ -27,13 +27,18 @@
             const msg = messageInput.value;
             if (msg) {
                 socket.emit('new_message', msg);
-
                 const messageElement = document.createElement("div");
                 messageElement.innerText = msg;
                 messageList.appendChild(messageElement);
 
                 messageInput.value = "";
             }
+        })
+
+        socket.on('broadcast_message', (message) => {
+            const messageElement = document.createElement("div");
+            messageElement.innerText = message;
+            messageList.appendChild(messageElement);
         })
     </script>
 
