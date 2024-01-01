@@ -16,8 +16,17 @@ const io = new Server(server, {
 
 io.on('connection', client => {
     console.log("Connection is established");
+
+    client.on("join", (data) => {
+        client.username = data;
+    });
+
     client.on('new_message', (message) => {
-        client.broadcast.emit('broadcast_message', message);
+        let userMessage = {
+            username: client.username,
+            message: message
+        }
+        client.broadcast.emit('broadcast_message', userMessage);
     })
     client.on('disconnect', () => {
         console.log('Connection is disconnected');
