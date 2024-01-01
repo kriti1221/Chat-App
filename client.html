@@ -42,6 +42,14 @@
             messageElement.innerText = userMessage.username + ":" + userMessage.message;
             messageList.appendChild(messageElement);
         })
+
+        socket.on('load_messages', (msgs) => {
+            msgs.forEach((m) => {
+                const messageElement = document.createElement("div")
+                messageElement.innerText = new Date(m.timestamp).toDateString() + " - " + m.username + ":" + m.message
+                messageList.appendChild(messageElement);
+            })
+        });
     </script>
 
 </body>

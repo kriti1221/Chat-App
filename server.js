@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 
 import http from 'http';
 import cors from "cors";
-import  connectUsingMongoose  from "./config.js";
+import connectUsingMongoose from "./config.js";
 import { chatModel } from "./chat.schema.js";
 
 const app = express();
@@ -21,6 +21,13 @@ io.on('connection', client => {
 
     client.on("join", (data) => {
         client.username = data;
+
+        chatModel.find().sort({ timestamp: 1 }).limit(50).
+            then(messages => {
+                client.emit('load_messages', messages);
+            }).catch(err => {
+                console.error(err);
+            })
     });
 
     client.on('new_message', (message) => {
@@ -30,11 +37,11 @@ io.on('connection', client => {
         }
 
         //adding in db
-        const newChat=new chatModel(
+        const newChat = new chatModel(
             {
-                username:client.username,
-                message:message,
-                timestamp:new Date()
+                username: client.username,
+                message: message,
+                timestamp: new Date()
             }
         );
         newChat.save();
