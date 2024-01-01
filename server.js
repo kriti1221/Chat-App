@@ -4,6 +4,8 @@ import { Server } from "socket.io";
 
 import http from 'http';
 import cors from "cors";
+import  connectUsingMongoose  from "./config.js";
+import { chatModel } from "./chat.schema.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -26,6 +28,17 @@ io.on('connection', client => {
             username: client.username,
             message: message
         }
+
+        //adding in db
+        const newChat=new chatModel(
+            {
+                username:client.username,
+                message:message,
+                timestamp:new Date()
+            }
+        );
+        newChat.save();
+
         client.broadcast.emit('broadcast_message', userMessage);
     })
     client.on('disconnect', () => {
@@ -35,4 +48,6 @@ io.on('connection', client => {
 
 server.listen(3000, () => {
     console.log(`Listening on port 3000`);
+
+    connectUsingMongoose();
 });
